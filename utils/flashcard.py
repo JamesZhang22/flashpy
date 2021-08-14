@@ -11,12 +11,20 @@ class FlashCard:
         self.text = question
         self.color = RED
         self.hover = False
+        self.clicked = False
 
     def draw(self, screen):
         if self.hover:
             self.color = YELLOW
             self.text = self.answer
         elif not self.hover:
+            self.color = RED
+            self.text = self.question
+
+        if self.clicked:
+            self.color = YELLOW
+            self.text = self.answer
+        elif not self.clicked:
             self.color = RED
             self.text = self.question
 
@@ -37,3 +45,15 @@ class FlashCard:
         
         else:
             self.hover = True
+
+    def is_clicked(self, pos):
+        x, y = pos
+
+        if not (x >= self.x and x <= self.x + self.w):
+            self.clicked = False
+
+        elif not (y >= self.y and y <= self.y + self.h):
+            self.clicked = False
+        
+        else:
+            self.clicked = True
