@@ -131,6 +131,11 @@ def main():
                             q_pressed = True
                         elif add_card_button.y == 300 and add_card_button.clicked(pos):
                             a_pressed = True
+                        elif add_card_button.y == 380 and add_card_button.clicked(pos):
+                            question_answer[q_button.text] = a_button.text
+                            q_button.text = ''
+                            a_button.text = ''
+                            add_card =  False
 
             if event.type == pygame.KEYDOWN:
                 if q_pressed:
