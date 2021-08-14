@@ -14,7 +14,14 @@ start_button = Button(300, 450, 300, 100, GREEN, 50, "START", WHITE)
 add_button = Button(30, 80, 100, 200, GRAY, 0, None, BLACK, "images/add.png")
 main_buttons = [add_button]
 
-add_card_buttons = []
+# add card buttons
+q_button = Button(240, 200, 410, 50, GRAY, 30, '', BLACK)
+a_button = Button(240, 300, 410, 50, GRAY, 30, '', BLACK)
+done_button = Button(400, 380, 100, 40, GREEN, 30, "Done", WHITE)
+add_card_buttons = [q_button, a_button, done_button]
+
+# flashcards
+question_answer = {}
 
 # Drawing Functions
 def draw_start(screen):
@@ -52,8 +59,6 @@ def draw_main(screen, card):
 
         # card
         pygame.draw.rect(screen, WHITE, (225, 150, 450, 300))
-        done_button = Button(400, 380, 100, 40, GREEN, 30, "Done", WHITE)
-        add_card_buttons.append(done_button)
 
         # labels
         font2 = get_font_bold(30)
@@ -61,12 +66,6 @@ def draw_main(screen, card):
         text_surface_a = font2.render("Answer", True, BLACK)
         screen.blit(text_surface_q, (240, 170))
         screen.blit(text_surface_a, (240, 270))
-
-        # user input
-        q_button = Button(240, 200, 410, 50, GRAY, 30, '', BLACK)
-        a_button = Button(240, 300, 410, 50, GRAY, 30, '', BLACK)
-        add_card_buttons.append(q_button)
-        add_card_buttons.append(a_button)
 
         for button_add in add_card_buttons:
             button_add.draw(screen)
@@ -116,6 +115,8 @@ def main():
 
             if pygame.mouse.get_pressed()[0]:
                 pos = pygame.mouse.get_pos()
+                q_pressed = False
+                a_pressed = False
                 for button in main_buttons:
                     if button.image == "images/add.png" and button.clicked(pos):
                         add_card = True
@@ -123,12 +124,26 @@ def main():
             if add_card:
                 if pygame.mouse.get_pressed()[0]:
                     pos = pygame.mouse.get_pos()
+                    q_pressed = False
+                    a_pressed = False
                     for add_card_button in add_card_buttons:
                         if add_card_button.y == 200 and add_card_button.clicked(pos):
                             q_pressed = True
+                        elif add_card_button.y == 300 and add_card_button.clicked(pos):
+                            a_pressed = True
 
-            if event.type == pygame.KEYDOWN and q_pressed:
-                print(1)
+            if event.type == pygame.KEYDOWN:
+                if q_pressed:
+                    if event.key == pygame.K_BACKSPACE:
+                        q_button.text = q_button.text[:-1]
+                    else:
+                        q_button.text += event.unicode
+                elif a_pressed:
+                    if event.key == pygame.K_BACKSPACE:
+                        a_button.text = a_button.text[:-1]
+                    else:
+                        a_button.text += event.unicode
+            
                 
 
             
