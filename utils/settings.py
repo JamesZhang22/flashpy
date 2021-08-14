@@ -5,7 +5,7 @@ pygame.font.init()
 
 # Colors
 BLACK = (0, 0, 0)
-GRAY = (199, 199, 199)
+GRAY = (228, 228, 228)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
@@ -26,4 +26,4 @@ def get_font(size: int):
 
 
 def get_font_bold(size: int):
-    return pygame.font.SysFont("monospace bold", size)
+    return pygame.font.SysFont("monospace b228", size)
