@@ -1,4 +1,4 @@
-import sys
+import sys, random
 from utils.button import Button
 from utils import *
 
@@ -12,7 +12,8 @@ start_button = Button(300, 450, 300, 100, GREEN, 50, "START", BLACK)
 
 # Main app buttons
 add_button = Button(10, 80, 100, 200, GRAY, 0, None, BLACK, "images/add.png")
-main_buttons = [add_button]
+test_button = Button(700, 5, 80, 40, CYAN, 45, "Test", BLACK)
+main_buttons = [add_button, test_button]
 
 # add card buttons
 q_button = Button(240, 200, 410, 50, GRAY, 30, '', BLACK)
@@ -23,6 +24,9 @@ add_card_buttons = [q_button, a_button, done_button]
 # flashcards
 question_answer = {}
 flashcards = []
+
+main_flashcard = FlashCard(100, 120, 700, 400, '', '')
+
 
 # Drawing Functions
 def draw_start(screen):
@@ -77,6 +81,19 @@ def draw_main(screen, card):
     pygame.display.update()
 
 
+def draw_test(screen):
+    screen.fill(CYAN)
+
+    font = get_font_bold(45)
+    text_surface = font.render("Test", True, BLACK)
+    screen.blit(text_surface, (420, 10))
+    pygame.draw.line(screen, BLACK, (0, 50), (900, 50), 3)
+
+    main_flashcard.draw(screen)
+
+    pygame.display.update()
+
+
 # Game Loops
 def start():
     on = True
@@ -108,6 +125,7 @@ def main():
     add_card = False
     q_pressed = False
     a_pressed = False
+    test = False
 
     while on:
         clock.tick(FPS)
@@ -124,6 +142,12 @@ def main():
                 for button in main_buttons:
                     if button.image == "images/add.png" and button.clicked(pos):
                         add_card = True
+                    elif button.text == "Test" and button.clicked(pos):
+                        rquestion = random.choice(list(question_answer.keys()))
+                        ranswer = question_answer[rquestion]
+                        main_flashcard.question = rquestion
+                        main_flashcard.answer = ranswer
+                        test = True
 
             if add_card:
                 if pygame.mouse.get_pressed()[0]:
@@ -148,6 +172,13 @@ def main():
                             q_button.text = ''
                             a_button.text = ''
                             add_card =  False
+
+            if test:
+                if pygame.mouse.get_pressed()[0]:
+                    pos = pygame.mouse.get_pos()
+                    main_flashcard.is_clicked(pos)
+                    
+                    
 
             if event.type == pygame.KEYDOWN:
                 if q_pressed:
@@ -177,8 +208,11 @@ def main():
         else:
             q_button.color = GRAY
             a_button.color = GRAY
-
-        draw_main(SCREEN, add_card)
+        
+        if test:
+            draw_test(SCREEN)
+        elif not test:
+            draw_main(SCREEN, add_card)
 
 
 if __name__ == "__main__":
