@@ -1,4 +1,4 @@
-import sys, random
+import sys, random, json
 from utils.button import Button
 from utils import *
 
@@ -145,6 +145,8 @@ def main():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                with open("save.json", "w") as f:
+                    json.dump(question_answer, f, indent=4)
                 pygame.quit()
                 sys.exit()
 
