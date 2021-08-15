@@ -31,7 +31,7 @@ class FlashCard:
             self.color = RED
             self.text = self.question
 
-        myfont = get_font_bold(45)
+        myfont = get_font_bold(30)
         text_surface = myfont.render(self.text, True, BLACK)
         screen.blit(text_surface, (self.x + self.w / 2 - text_surface.get_width() / 2, self.y + self.h / 2 - text_surface.get_height() / 2))
 
