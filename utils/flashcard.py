@@ -8,27 +8,28 @@ class FlashCard:
         self.h = h
         self.question = question
         self.answer = answer
-        self.text = question
+        self.text = ''
         self.color = RED
         self.hover = False
         self.clicked = False
 
     def draw(self, screen):
-        if self.hover:
-            self.color = YELLOW
-            self.text = self.answer
-        elif not self.hover:
-            self.color = RED
-            self.text = self.question
-
-        if self.clicked:
-            self.color = YELLOW
-            self.text = self.answer
-        elif not self.clicked:
-            self.color = RED
-            self.text = self.question
-
         pygame.draw.rect(screen, self.color, (self.x, self.y, self.w, self.h), 0, 10)
+        
+        if self.hover and not self.clicked:
+            self.color = YELLOW
+            self.text = self.answer
+        elif not self.hover and not self.clicked:
+            self.color = RED
+            self.text = self.question
+
+    
+        if self.clicked and not self.hover:
+            self.color = YELLOW
+            self.text = self.answer
+        elif not self.clicked and not self.hover:
+            self.color = RED
+            self.text = self.question
 
         myfont = get_font_bold(45)
         text_surface = myfont.render(self.text, True, BLACK)
