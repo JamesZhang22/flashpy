@@ -1,4 +1,5 @@
 import sys, random, json
+from json.decoder import JSONDecodeError
 from utils.button import Button
 from utils import *
 
@@ -24,6 +25,28 @@ add_card_buttons = [q_button, a_button, done_button]
 # flashcards
 question_answer = {}
 flashcards = []
+
+loaded = False
+if not loaded:
+    f = open('save.json',)
+    try:
+        data = json.load(f)
+        for k, v in data.items():
+            question_answer[k] = v
+    except JSONDecodeError:
+        pass
+    
+    for q, a in question_answer.items():
+        if len(flashcards) > 6:
+            y_val = 300
+            x_val = 110 * (len(flashcards) - 7) + 10 
+        else:
+            x_val = 110 * len(flashcards) + 120 
+            y_val = 80
+        new_card = FlashCard(x_val, y_val, 100, 200, q, a)
+        flashcards.append(new_card)
+
+    loaded = True
 
 main_flashcard = FlashCard(100, 120, 700, 400, '', '')
 
@@ -62,8 +85,9 @@ def draw_main(screen, card):
     for button in main_buttons:
         button.draw(screen)
 
-    for flashcard in flashcards:
-        flashcard.draw(screen)
+    if flashcards:
+        for flashcarde in flashcards:
+            flashcarde.draw(screen)
 
     if card:
         # transparent
@@ -155,7 +179,7 @@ def main():
                 q_pressed = False
                 a_pressed = False
                 for button in main_buttons:
-                    if button.image == "images/add.png" and button.clicked(pos):
+                    if button.image == "images/add.png" and button.clicked(pos) and not test:
                         add_card = True
                     elif button.text == "Test" and button.clicked(pos):
                         index = 0
@@ -169,6 +193,13 @@ def main():
                 if finish:
                     if close_test.clicked(pos):
                         test = False
+
+            if event.type == pygame.MOUSEMOTION and not add_card:
+                pos = pygame.mouse.get_pos()
+                for flashcardz in flashcards:
+                    flashcardz.is_hover(pos)
+                for main_button in main_buttons:
+                    main_button.is_hover(pos)
 
             if add_card:
                 if pygame.mouse.get_pressed()[0]:
@@ -221,13 +252,6 @@ def main():
                         a_button.text = a_button.text[:-1]
                     else:
                         a_button.text += event.unicode
-
-            if event.type == pygame.MOUSEMOTION and not add_card:
-                pos = event.pos
-                for flashcardz in flashcards:
-                    flashcardz.is_hover(pos)
-                for main_button in main_buttons:
-                    main_button.is_hover(pos)
                 
         if q_pressed:
             q_button.color = DARK_GRAY
@@ -238,7 +262,7 @@ def main():
         else:
             q_button.color = GRAY
             a_button.color = GRAY
-        
+
         if test:
             draw_test(SCREEN, finish)
         elif not test:
