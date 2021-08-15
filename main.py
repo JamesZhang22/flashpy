@@ -27,6 +27,12 @@ flashcards = []
 
 main_flashcard = FlashCard(100, 120, 700, 400, '', '')
 
+# arrows
+right_arrow = Button(820, 268, 64, 64, CYAN, 1, None, BLACK, "images/right-arrow.png")
+left_arrow = Button(16, 268, 64, 64, CYAN, 1, None, BLACK, "images\left-arrow.png")
+
+# close test
+close_test = Button(375, 535, 150, 50, RED, 30, "RETURN", "BLACK")
 
 # Drawing Functions
 def draw_start(screen):
@@ -81,7 +87,7 @@ def draw_main(screen, card):
     pygame.display.update()
 
 
-def draw_test(screen):
+def draw_test(screen, finish):
     screen.fill(CYAN)
 
     font = get_font_bold(45)
@@ -89,7 +95,12 @@ def draw_test(screen):
     screen.blit(text_surface, (420, 10))
     pygame.draw.line(screen, BLACK, (0, 50), (900, 50), 3)
 
+    right_arrow.draw(SCREEN)
+    left_arrow.draw(SCREEN)
     main_flashcard.draw(screen)
+
+    if finish:
+        close_test.draw(SCREEN)
 
     pygame.display.update()
 
@@ -125,7 +136,9 @@ def main():
     add_card = False
     q_pressed = False
     a_pressed = False
+    finish = False
     test = False
+    index = 0
 
     while on:
         clock.tick(FPS)
@@ -143,11 +156,17 @@ def main():
                     if button.image == "images/add.png" and button.clicked(pos):
                         add_card = True
                     elif button.text == "Test" and button.clicked(pos):
-                        rquestion = random.choice(list(question_answer.keys()))
-                        ranswer = question_answer[rquestion]
-                        main_flashcard.question = rquestion
-                        main_flashcard.answer = ranswer
+                        index = 0
+                        finish = False
+                        question_answer_keys = list(question_answer.keys())
+                        random.shuffle(question_answer_keys)
+                        main_flashcard.question = question_answer_keys[index]
+                        main_flashcard.answer = question_answer[question_answer_keys[index]]
+
                         test = True
+                if finish:
+                    if close_test.clicked(pos):
+                        test = False
 
             if add_card:
                 if pygame.mouse.get_pressed()[0]:
@@ -177,8 +196,17 @@ def main():
                 if pygame.mouse.get_pressed()[0]:
                     pos = pygame.mouse.get_pos()
                     main_flashcard.is_clicked(pos)
-                    
-                    
+                    if right_arrow.clicked(pos) and index >= len(question_answer_keys) - 1:
+                        main_flashcard.question = main_flashcard.answer = "Finished!"
+                        finish = True
+                    elif right_arrow.clicked(pos) and index < len(question_answer_keys) - 1:
+                        index += 1
+                        main_flashcard.question = question_answer_keys[index]
+                        main_flashcard.answer = question_answer[question_answer_keys[index]]
+                    elif left_arrow.clicked(pos) and 0 < index < len(question_answer_keys):
+                        index -= 1
+                        main_flashcard.question = question_answer_keys[index]
+                        main_flashcard.answer = question_answer[question_answer_keys[index]]
 
             if event.type == pygame.KEYDOWN:
                 if q_pressed:
@@ -210,7 +238,7 @@ def main():
             a_button.color = GRAY
         
         if test:
-            draw_test(SCREEN)
+            draw_test(SCREEN, finish)
         elif not test:
             draw_main(SCREEN, add_card)
 
